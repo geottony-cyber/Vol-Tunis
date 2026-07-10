@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi Vol Marseille - Tunis</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; width: 100%; text-align: center; }
+        h1 { font-size: 1.4rem; color: #1a1a1a; margin-bottom: 5px; }
+        .dates { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+        .price-box { background: #e8f0fe; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .price { font-size: 2.5rem; font-weight: bold; color: #1a73e8; }
+        .status { font-size: 0.9rem; color: #202124; font-weight: 500; }
+        button { border: none; padding: 12px 24px; font-size: 1rem; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; margin-bottom: 10px; }
+        .btn-notif { background: #1a73e8; color: white; }
+        .btn-notif:hover { background: #1557b0; }
+        .btn-book { background: #34a853; color: white; text-decoration: none; display: block; box-sizing: border-box; }
+        .btn-book:hover { background: #2b8c44; }
+        .bell, .plane { font-size: 1.2rem; margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>✈️ Vol Marseille (MRS) ➔ Tunis (TUN)</h1>
+    <div class="dates">17 Octobre — 27 Octobre 2026</div>
+    
+    <div class="price-box">
+        <div class="status">Meilleur prix actuel</div>
+        <div class="price" id="flight-price">270 €</div>
+        <div id="trend" style="color: green; font-size: 0.9rem; margin-top: 5px;">➔ Prix stable</div>
+    </div>
+
+    <!-- NOUVEAU BOUTON DE RÉSERVATION -->
+    <a href="https://www.google.com/travel/flights?tfs=CCcQAhooEgoyMDI2LTEwLTE3agwIAxIIL20vMGpkdHRyDAgDEggvbS8wZnRuOBooEgoyMDI2LTEwLTI3agwIAxIIL20vMGZ0bjhyDAgDEggvbS8wamR0dFIDRVVSemxDalJJUVdWT2VXTktPSFZuU0hOQlJETnVObmRDUnkwdExTMHRMUzFsYW13eE1TMXVNa0ZCUVVGQlIzQlJNemROVGtFeVZIRkJFZ1pVVHpnNE1EQWFDd2o0MGdFUUFob0RSVlZTT0ROd2tmRUI&curr=EUR&hl=fr-FR&gl=FR" target="_blank" class="button btn-book" style="padding: 12px 24px; font-size: 1rem; border-radius: 8px; font-weight: bold; margin-bottom: 15px;">
+        <span class="plane">✈️</span>Réservez votre billet
+    </a>
+
+    <button id="notif-btn" class="btn-notif" onclick="requestNotificationPermission()">
+        <span class="bell">🔔</span>Activer les notifications iPhone
+    </button>
+</div>
+
+<script>
+    function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+            alert("Ce navigateur ne prend pas en charge les notifications.");
+            return;
+        }
+
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                document.getElementById('notif-btn').innerText = "✅ Notifications activées !";
+                document.getElementById('notif-btn').style.background = "#24a0ed";
+                
+                new Notification("Alerte Vol Activée !", {
+                    body: "Vous serez notifié dès que le prix du vol Marseille-Tunis bouge.",
+                });
+            } else {
+                alert("Activez les notifications dans les réglages de votre navigateur.");
+            }
+        });
+    }
+
+    // Simulation de baisse de prix après 10 secondes
+    setTimeout(() => {
+        const nouveauPrix = 249;
+        document.getElementById('flight-price').innerText = nouveauPrix + " €";
+        document.getElementById('trend').innerText = "📉 En baisse ! (-21€)";
+        document.getElementById('trend').style.color = "green";
+
+        if (Notification.permission === "granted") {
+            new Notification("🚨 BAISSE DE PRIX ! Marseille-Tunis", {
+                body: `Le vol vient de passer à ${nouveauPrix}€. Réservez vite !`,
+                requireInteraction: true
+            });
+        }
+    }, 10000);
+</script>
+
+</body>
+</html>

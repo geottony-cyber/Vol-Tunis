@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suivi Vol Marseille - Tunis</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 25px; border-radius: 16px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; width: 100%; text-align: center; }
+        h1 { font-size: 1.4rem; color: #1a1a1a; margin-bottom: 5px; }
+        .dates { color: #666; font-size: 0.9rem; margin-bottom: 20px; }
+        .price-box { background: #e8f0fe; padding: 20px; border-radius: 12px; margin-bottom: 20px; }
+        .price { font-size: 2.5rem; font-weight: bold; color: #1a73e8; }
+        .status { font-size: 0.9rem; color: #202124; font-weight: 500; }
+        button { background: #1a73e8; color: white; border: none; padding: 12px 24px; font-size: 1rem; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; transition: 0.2s; }
+        button:hover { background: #1557b0; }
+        .bell { font-size: 1.2rem; margin-right: 8px; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>✈️ Vol Marseille (MRS) ➔ Tunis (TUN)</h1>
+    <div class="dates">17 Octobre — 27 Octobre 2026</div>
+    
+    <div class="price-box">
+        <div class="status">Meilleur prix actuel</div>
+        <div class="price" id="flight-price">270 €</div>
+        <div id="trend" style="color: green; font-size: 0.9rem; margin-top: 5px;">➔ Prix stable</div>
+    </div>
+
+    <button id="notif-btn" onclick="requestNotificationPermission()">
+        <span class="bell">🔔</span>Activer les notifications iPhone
+    </button>
+</div>
+
+<script>
+    // Demander l'autorisation d'envoyer des notifications
+    function requestNotificationPermission() {
+        if (!("Notification" in window)) {
+            alert("Ce navigateur ne prend pas en charge les notifications.");
+            return;
+        }
+
+        Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+                document.getElementById('notif-btn').innerText = "✅ Notifications activées !";
+                document.getElementById('notif-btn').style.background = "#24a0ed";
+                
+                // Notification de test immédiate
+                new Notification("Alerte Vol Activée !", {
+                    body: "Vous serez notifié dès que le prix du vol Marseille-Tunis bouge.",
+                    icon: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957"
+                });
+            } else {
+                alert("Vous avez bloqué les notifications. Activez-les dans les réglages de votre navigateur / iPhone.");
+            }
+        });
+    }
+
+    // SIMULATION DE VARIATION DE PRIX (Pour tester le système)
+    // Dans la réalité, ce script s'exécute en arrière plan pour surveiller les prix.
+    setTimeout(() => {
+        const nouveauPrix = 249; // On simule une baisse de prix à 249€ après 10 secondes
+        document.getElementById('flight-price').innerText = nouveauPrix + " €";
+        document.getElementById('trend').innerText = "📉 En baisse ! (-21€)";
+        document.getElementById('trend').style.color = "green";
+
+        // Déclenchement de la notification push sur l'écran
+        if (Notification.permission === "granted") {
+            new Notification("🚨 BAISSE DE PRIX ! Marseille-Tunis", {
+                body: `Le vol vient de passer à ${nouveauPrix}€ (Transavia). Réservez vite !`,
+                requireInteraction: true
+            });
+        }
+    }, 10000); // Se déclenche 10 secondes après l'ouverture de la page pour le test
+</script>
+
+</body>
+</html>
